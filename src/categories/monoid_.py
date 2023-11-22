@@ -58,8 +58,8 @@ class monoid(Generic[T]):
     _empty: T
     _type: type[T]
 
-    def __init__(self, t: type[T], empty: T, op: Callable[[T, T], T]):
-        self._type = t
+    def __init__(self, empty: T, op: Callable[[T, T], T]):
+        self._type = type(empty)
         self._op = op
         self._empty = empty
 
