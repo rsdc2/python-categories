@@ -26,33 +26,51 @@ class Endofunctor(Generic[T]):
 
 U = TypeVar('U', bound=Endofunctor)
 
+class Maybe(Endofunctor[T | None]):
+    _t: type[T | None]
+    _value: T | None
 
+    def __init__(self, value: T | None):
+        self._value = value
+        self._t = type(value)
+
+    def fmap(self, f: Callable[[T | None], T | None]) -> Maybe[T | None]:
+        if self._value is None:
+            return Nothing
+        
+        else:
+            return Just(f(self._value))
+    
+    def __repr__(self) -> str:
+        return f'Maybe({self._value})'
+    
 
 
 class Identity(Endofunctor):
     pass
 
 
-class Just(Endofunctor[T]):
-    def fmap(self, f: Callable[[T], T]) -> Just[T]:
+class Just(Maybe[T | None]):
+    def fmap(self, f: Callable[[T | None], T | None]) -> Just[T]:
         return Just(f(self._value))    
     
     def __repr__(self) -> str:
         return f'Just({self._value})'
     
 
-class Nothing(Endofunctor[T]):
+class Nothing(Maybe[T | None]):
+    _value = None
 
     def __init__(self):
         pass
 
-    def fmap(self, f: Callable[[T], T]) -> Nothing:
+    def fmap(self, f: Callable[[T | None], T | None]) -> Nothing:
         return Nothing()
     
     def __repr__(self) -> str:
         return f'Nothing'
     
-Maybe = Just[T] | Nothing
+# Maybe = Just[T] | Nothing
 
 
 class endofunctor(Generic[T, U]):
@@ -81,9 +99,9 @@ class maybe(endofunctor):
     def __init__(self, t: type[T]):
         self._t1 = t
 
-    def __call__(self, value: T | None) -> Maybe[T]:
+    def __call__(self, value: T | None) -> Maybe[T | None]:
         if value is None:
-            return Nothing[T]()
+            return Nothing()
 
         return Just(value)
 
