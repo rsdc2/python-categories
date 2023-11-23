@@ -42,9 +42,14 @@ if __name__ == '__main__':
 
     mbe = maybe(int)
 
-    add1 = lambda x: x + 1
+    # add1 = lambda x: x + 1
 
+    def add1(x: int):
+        return x + 1
+
+    # M = mbe(1)
     M = mbe(1).fmap(add1)
-    N = mbe(None).fmap(add1) 
+
+    N: Maybe[None] = mbe(None).fmap(add1) 
 
     print(M, N)

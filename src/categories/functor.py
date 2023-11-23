@@ -33,11 +33,15 @@ class Identity(Endofunctor):
     pass
 
 
-class Just(Endofunctor):
-    pass
+class Just(Endofunctor[T]):
+    def fmap(self, f: Callable[[T], T]) -> Just[T]:
+        return Just(f(self._value))    
     
-class Nothing(Endofunctor):
-    _value = None
+    def __repr__(self) -> str:
+        return f'Just({self._value})'
+    
+
+class Nothing(Endofunctor[T]):
 
     def __init__(self):
         pass
@@ -45,7 +49,10 @@ class Nothing(Endofunctor):
     def fmap(self, f: Callable[[T], T]) -> Nothing:
         return Nothing()
     
-Maybe = Just | Nothing
+    def __repr__(self) -> str:
+        return f'Nothing'
+    
+Maybe = Just[T] | Nothing
 
 
 class endofunctor(Generic[T, U]):
@@ -74,9 +81,9 @@ class maybe(endofunctor):
     def __init__(self, t: type[T]):
         self._t1 = t
 
-    def __call__(self, value: T | None) -> Maybe:
+    def __call__(self, value: T | None) -> Maybe[T]:
         if value is None:
-            return Nothing()
+            return Nothing[T]()
 
         return Just(value)
 

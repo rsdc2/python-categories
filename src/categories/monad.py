@@ -55,7 +55,7 @@ class monad(Generic[T, U]):
         return self.__repr__()
     
     @staticmethod
-    def ret(m: monad, v: T) -> Monad[T]:
+    def pure(m: monad, v: T) -> Monad[T]:
         return m(v)
 
     @staticmethod
