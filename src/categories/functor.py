@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import abstractmethod, abstractclassmethod
-from typing import Generic, TypeVar, Callable, Any, Optional
+from typing import Generic, TypeVar, Callable, Any, Optional, Iterable
 from categories.compose import compose
 
 T = TypeVar('T')
@@ -24,12 +24,12 @@ class Endofunctor(Generic[T]):
         return f'Endofunctor({self._value})'
     
 
-U = TypeVar('U', bound=Endofunctor)
+U = TypeVar('U', bound=Iterable)
 
 
 
 
-class Identity(Endofunctor):
+class Identity(Endofunctor[T]):
     pass
 
 

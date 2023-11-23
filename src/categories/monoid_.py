@@ -12,7 +12,7 @@ from typing import (
 
 import operator
 from functools import reduce
-
+from .semigroup import Semigroup, semigroup
 T = TypeVar('T')
 
 
@@ -51,7 +51,6 @@ class Monoid(Generic[T]):
         return self.__repr__()
 
 
-# The problem with this 
 
 class monoid(Generic[T]):
     _op: Callable[[T, T], T]
@@ -73,7 +72,3 @@ class monoid(Generic[T]):
     
     def concat(self, seq: Sequence[T]) -> Monoid[T]:
         return Monoid[T](reduce(self._op, seq, self._empty))
-
-    @staticmethod    
-    def mconcat(m: monoid[T], seq: Sequence[T]) -> Monoid[T]:
-        return m.concat(seq)

@@ -36,7 +36,9 @@ if __name__ == '__main__':
 
     # mon = monoid[lst[int]](lst(int).ret(), lst(int).join)
 
-    f = endofunctor(int, Identity)
+    f = endofunctor(int, Identity[int])
+    g = endofunctor(int, list[int])
+    
 
     v = f(1)
 
