@@ -7,7 +7,8 @@ from typing import (
     Sequence, 
     Type, 
     ClassVar, 
-    Union
+    Union,
+    Any
 )
 
 import operator
@@ -18,13 +19,12 @@ T = TypeVar('T')
 
 
 class Monoid(Generic[T]):
-    _op: Callable[[T, T], T]
-    _empty: T
+    _monoid: monoid[T]
     _value: T
-    _type: type[T]
 
-    def __init__(self, value: T):
+    def __init__(self, value: T, monoid: monoid[T]):
         self._value = value
+        self._monoid = monoid
 
     def op(self, x: T, y: T) -> T:
         return self.op(x, y)
@@ -38,8 +38,8 @@ class Monoid(Generic[T]):
         self._value = value
     
     def __add__(self, other: Monoid[T]) -> Monoid[T]:
-        value = self._op(self._value, other._value)
-        return Monoid[T](value)
+        value = self._monoid._op(self._value, other._value)
+        return Monoid[T](value, self._monoid)
     
     def __mul__(self, other: Monoid[T]) -> Monoid[T]:
         return self.__add__(other)
@@ -50,25 +50,42 @@ class Monoid(Generic[T]):
     def __str__(self) -> str:
         return self.__repr__()
 
+    def __eq__(self, other: Any) -> bool:
+        if type(other) != type(self):
+            return False
+        
+        return self._monoid == other._monoid and \
+            self._value == other._value
+
 
 
 class monoid(Generic[T]):
     _op: Callable[[T, T], T]
-    _empty: T
+    _identity: T
     _type: type[T]
 
     def __init__(self, empty: T, op: Callable[[T, T], T]):
         self._type = type(empty)
         self._op = op
-        self._empty = empty
+        self._identity = empty
 
     def __call__(self, value: T) -> Monoid[T]:
-        m = Monoid[T](value)
-        m._op = self._op
-        m._empty = self._empty
-        m._type = self._type
-
-        return m
+        return Monoid[T](value, self)
+    
+    def __eq__(self, other: Any) -> bool:
+        if type(other) != type(self):
+            return False
+        return self._op == other._op and \
+            self._type == other._type and \
+            self._identity == other._identity
     
     def concat(self, seq: Sequence[T]) -> Monoid[T]:
-        return Monoid[T](reduce(self._op, seq, self._empty))
+        return Monoid[T](reduce(self._op, seq, self._identity), self)
+
+    def test_associativity(self, triple: tuple[T, T, T]) -> bool:
+        ms = [Monoid[T](value, self) for value in triple]
+        return ms[0] + (ms[1] + ms[2]) == (ms[0] + ms[1]) + ms[2]
+    
+    def test_identity(self, test_value: T) -> bool:
+        return Monoid(test_value, self) + Monoid(self._identity, self) == Monoid(test_value, self) and \
+            Monoid(self._identity, self) + Monoid(test_value, self) == Monoid(test_value, self)

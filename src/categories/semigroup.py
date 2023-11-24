@@ -1,36 +1,42 @@
 from __future__ import annotations
-from typing import TypeVar, Callable, Generic, Sequence
+from typing import TypeVar, Callable, Generic, Sequence, Any
 from functools import reduce
 
 T = TypeVar('T')
 
 
 class Semigroup(Generic[T]):
-    _op: Callable[[T, T], T]
-    _value: T
-    _type: type[T]
+    _semigroup: semigroup
 
-    def __init__(self, value: T):
+    def __init__(self, value: T, sg: semigroup):
         self._value = value
+        self._semigroup = sg
 
     def __str__(self) -> str:
-        return f'Semigroup({self._type.__name__}, {self._value})'
+        return f'Semigroup({self._semigroup._type.__name__}, {self._value})'
 
     def __repr__(self) -> str:
         return self.__str__()
 
     def __add__(self, other: Semigroup[T]) -> Semigroup[T]:
-        value = self._op(self._value, other._value)
-        return Semigroup[T](value)
+        value = self._semigroup._op(self._value, other._value)
+        return Semigroup[T](value, self._semigroup)
     
     def __mul__(self, other: Semigroup[T]) -> Semigroup[T]:
         return self.__add__(other)
 
-    def op(self, x: T, y: T) -> T:
-        return self._op(x, y)
+    def __eq__(self, other: Any) -> bool:
+        if type(other) != type(self):
+            return False
+        
+        return self._semigroup == other._semigroup and \
+            self._value == other._value
 
-    def concat(self, seq: Sequence[T]) -> T:
-        return reduce(self.op, seq, seq[0])
+    def op(self, x: T, y: T) -> T:
+        return self._semigroup._op(x, y)
+
+    def concat(self, seq: Sequence[T]) -> Semigroup[T]:
+        return Semigroup(reduce(self.op, seq, seq[0]), self._semigroup)
     
 
 class semigroup(Generic[T]):
@@ -42,14 +48,18 @@ class semigroup(Generic[T]):
         self._op = op
 
     def __call__(self, value: T) -> Semigroup[T]:
-        s = Semigroup[T](value)
-        s._op = self._op
-        s._type = self._type
-
+        s = Semigroup[T](value, self)
         return s
+
+    def __eq__(self, other: Any) -> bool:
+        if type(other) != type(self):
+            return False
+        return self._op == other._op and self._type == other._type
     
     def concat(self, seq: Sequence[T]) -> Semigroup[T]:
-        s = Semigroup[T](reduce(self._op, seq, seq[0]))
-        s._type = self._type
-        s._op = self._op
+        s = Semigroup[T](reduce(self._op, seq, seq[0]), self)
         return s
+    
+    def test_associativity(self, triple: tuple[T, T, T]) -> bool:
+        ms = [Semigroup[T](value, self) for value in triple]
+        return ms[0] + (ms[1] + ms[2]) == (ms[0] + ms[1]) + ms[2]

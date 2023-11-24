@@ -20,3 +20,6 @@ z = M.concat([1, 2, 3])
 a = X.concat(['hello ', 'my friend ', 'Robert'])
 b = Y.concat([[], ['hello', 'robert'], ['my friend']])
 print(z, a, b)
+
+print(N.test_identity(3))
+print(Y.test_identity('hello'))
