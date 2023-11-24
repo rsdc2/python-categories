@@ -139,7 +139,7 @@ class Lst(Generic[T]):
         return Lst(v)
 
     @staticmethod
-    def join(x: Lst[Lst[T]]) -> Lst[T]:
+    def join(x: Lst[Any], y: Lst[Any]) -> Lst[Any]:
         return x._v
     # @staticmethod
     # # def compose(x: Callable[[monad[T], T], Monad[T]], y: Callable[[monad[U], U], Monad[U]]) -> Callable[[monad[Any], T], Monad[Monad[T]]]:
@@ -182,12 +182,11 @@ class lst(Generic[T]):
         return lst(self._t)
 
     
-    def join(self, x: lst[Lst[T]], y: lst[T]) -> Callable[[T], Lst[T]]:
-        
-        # def _join(v: T) -> Lst[T]:
-        #     a = y(v)
-        #     b = x(a)
-        #     return b._v
+    def join(self, x: lst[Any], y: lst[Any]) -> lst[Any]:
+
+
+        def _join(v: Any) -> lst[Any]:
+            pass
         
         # return _join
         return lst(self._t)

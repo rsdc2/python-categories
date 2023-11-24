@@ -9,65 +9,7 @@ U = TypeVar('U')
 
 if __name__ == '__main__':
 
-    # # x = Monad.ret(Monad.ret(10))
-    # # y = compose(Monad[int].ret, Monad[int].ret)(10)
-    # # print(x, y)
-    # m = monad[int]()
 
-    # n = monad[Monad[int]]()
-
-    # x = n(m(10))
-
-
-    # mon = monoid()
-    # print(x)
-
-    # l = lst[int]
-    # m = Lst(Lst(1))
-    # x = m()
-
-    # f = compose(lst(Lst[int]), lst(int))(1)
-    # g = l.join(f)
-    # print(g)
-
-    # L = l(1)
-    # M = m(L)
-
-    # print(l.join(M))
-
-    def listify(x: Any) -> list[Any]:
-        return [x]
-    
-    
-    f = Callable[[Any], list[Any]]
-
-    def join(x: f, y: f) -> f:
-        """
-        """
-
-
-        def _join(z: Any) -> list[Any]:
-            l = x(y(z))
-
-            l_ = list(chain(*l))
-
-            return l_
-        
-        return _join
-
-
-    Mon = monoid[f](listify, join)
-
-    mon = Mon(listify)
-
-    a = Mon.concat([listify, listify])
-    print(a)
-
-    print(a.value('z'))
-    print(listify('z'))
-
-    
-    print(mon)
     # f = endofunctor(int, Identity[int])
     # g = endofunctor(int, list[int])
     
