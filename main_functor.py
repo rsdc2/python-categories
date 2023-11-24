@@ -1,7 +1,8 @@
-from categories.functor import Identity, Endofunctor, endofunctor, maybe, Maybe, Just, Nothing
+from categories.functor import Identity, Endofunctor, endofunctor, maybe, Maybe, Just, Nothing, lst, Lst
 from categories.monoid_ import Monoid, monoid
 from categories.compose import compose
-from typing import TypeVar
+from typing import TypeVar, Callable, Any, Type
+from itertools import chain
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -34,13 +35,44 @@ if __name__ == '__main__':
 
     # print(l.join(M))
 
-    # mon = monoid[lst[int]](lst(int).ret(), lst(int).join)
+    def listify(x: Any) -> list[Any]:
+        return [x]
+    
+    
+    f = Callable[[Any], list[Any]]
 
-    f = endofunctor(int, Identity[int])
-    g = endofunctor(int, list[int])
+    def join(x: f, y: f) -> f:
+        """
+        """
+
+
+        def _join(z: Any) -> list[Any]:
+            l = x(y(z))
+
+            l_ = list(chain(*l))
+
+            return l_
+        
+        return _join
+
+
+    Mon = monoid[f](listify, join)
+
+    mon = Mon(listify)
+
+    a = Mon.concat([listify, listify])
+    print(a)
+
+    print(a.value('z'))
+    print(listify('z'))
+
+    
+    print(mon)
+    # f = endofunctor(int, Identity[int])
+    # g = endofunctor(int, list[int])
     
 
-    v = f(1)
+    # v = f(1)
 
     mbe = maybe(int)
 
