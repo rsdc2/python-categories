@@ -1,91 +1,84 @@
 from __future__ import annotations
-from typing import Generic, TypeVar, Callable, Iterable, Any, Iterator
-from functools import partial
-from ..monoid_ import monoid
+from typing import Generic, TypeVar, Callable, Iterable, Any
+from itertools import chain
+from copy import deepcopy
 
 T = TypeVar('T')
 
-from functools import reduce
+F = Callable[[Any], Any]
+G = Callable[[T], T]
+H = Callable[[F], G]
+I = Callable[[Any], T]
+J = Callable[[I, I], I]
+K = Callable[[I, I], T]
 
 class Monad(Generic[T]):
 
-    _value: Iterable[T]
-    _t: Callable[[Any], Iterable[T]]
+    _value: T
+    _monad: monad
 
-    def __init__(self, t: Callable[[T], Iterable[T]], value: Iterable[T]):
-        self._t = t
+    def __init__(self, value: T, _monad: monad):
         self._value = value
+        self._monad = _monad
 
     def __str__(self) -> str:
-        return f'Functor({type(self._value)}, {str(self._value)})'
+        return f'Functor({self._monad}, {str(self._value)})'
+
+    def fmap(self, f: Callable[[Any], Any]) -> T:
+        return self._monad._fmap(f)(self._value)
     
-    def __add__(self, other: Monad[T]) -> Monad[T]:
-        xs = list(self._value)
-        ys = list(other._value)
+    def pure(self, x: Any) -> T:
+        return self._monad._pure(x)
 
-        return Monad(self._t, xs + ys)
+    def compose(self, x: Any) -> T:
+        return self._monad._compose(self._monad._pure, self._monad._pure)(x)
     
-    def __iter__(self) -> Iterator[T]:
-        return iter(self._value)
+    def join(self, x: I, y: I) -> I:
+        return self._monad._join(x, y)(self._value)
 
-    def fmap(self, f: Callable[[T], T]) -> Monad[T]:
 
-        items = self._t(map(f, self._value))
-        return Monad(self._t, items)
-    
-    @classmethod
-    def join(cls, x: Monad[Monad[T]]) -> Monad[T]:
-        
-        def _f(acc: Monad[T] | None, item: Monad[T]) -> Monad[T]:
-            if acc is None:
-                return item
-            return acc + item
-        
-        return reduce(_f, x, None)
-            
-    
-f = Callable[[Any], Monad[Any]]
+class monad(Generic[T]):
+    _type: type[T]
+    _fmap: H
+    _pure: I
+    _join: J
+    _compose: K
 
-class monad:
-    _t: f
+    def __init__(self, t: type[T], fmap: H, pure: I, join: J):
+        self._type = t
+        self._fmap = fmap
+        self._pure = pure
+        self._join = join
 
-    def __init__(self, t: f):
-        self._t = t
+    def __call__(self, v: T) -> Monad[T]:
+        return Monad(v, self)
 
-    def __call__(self, v: Any) -> Monad[Any]:
-        return self._t(v)
-
-    def __repr__(self) -> str:
-        return f'monad({self._t})'
-    
     def __str__(self) -> str:
-        return self.__repr__()
-    
-    def pure(self, v: Any) -> Monad[Any]:
-        return self._t(v)
-
-    @staticmethod
-    def join(x: f, y: f) -> f:
-
-        def _join(z: Any) -> Monad[Any]:
-            l = x(y(z))
-
-            l_ = l.join(l)
-
-            return l_
-
-        return _join
+        return f'functor({self._type}, {self._fmap})'
 
 if __name__ == '__main__':
-    # l = [1, 2, 3]
+    t = list
 
-    # f = Monad(list[int], l)
-    Md = monad(partial(Monad[int], list))
+    def listfmap(f: Callable[[Any], Any]) -> Callable[[list], list]:
 
-    md = Md([1, 2, 3])
-    # print(f.fmap(lambda x: x + 1))
-    Mn = monoid[f](Md.pure, monad.join)
+        def _listfmap(l: list) -> list:
+            return list(map(f, l))
 
-    conc = Mn.concat([Md.pure, Md.pure])
+        return _listfmap
+    
+    def listjoin(x: Callable[[Any], list], y: Callable[[Any], list]) -> Callable[[Any], list]:
 
-    i = conc([1, 2, 3])
+        def _listjoin(z: Any) -> list:
+            l = x(y(z))
+            l_ = list(chain(*l))
+            return l_
+
+        return _listjoin
+
+    def listify(x: Any): list[Any]
+        
+
+    
+    M = monad(list, listfmap, lambda x: [x], listjoin)
+    m = M([[1, 2], [3, 4]])
+    joined = m.join(listify, li)
