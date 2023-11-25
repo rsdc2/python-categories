@@ -3,6 +3,8 @@ from typing import Generic, TypeVar, Callable, Iterable, Any
 from itertools import chain
 from copy import deepcopy
 
+from ..monoid_ import monoid, Monoid
+
 T = TypeVar('T')
 
 F = Callable[[Any], Any]
@@ -31,20 +33,21 @@ class Monad(Generic[T]):
         return self._monad._pure(x)
 
     def compose(self, x: Any) -> T:
-        return self._monad._compose(self._monad._pure, self._monad._pure)(x)
+        return self._monad._pure(self._monad._pure(x))
     
-    def join(self, x: I, y: I) -> I:
-        return self._monad._join(x, y)(self._value)
+    def join(self, x: T) -> T:
+        pure = self._monad._pure
+        return self._monad._join(x)
 
 
 class monad(Generic[T]):
     _type: type[T]
     _fmap: H
     _pure: I
-    _join: J
+    _join: G
     _compose: K
 
-    def __init__(self, t: type[T], fmap: H, pure: I, join: J):
+    def __init__(self, t: type[T], fmap: H, pure: I, join: G):
         self._type = t
         self._fmap = fmap
         self._pure = pure
@@ -74,11 +77,18 @@ if __name__ == '__main__':
             return l_
 
         return _listjoin
+    
+    def listjoin_(x: list[list]) -> list:
 
-    def listify(x: Any): list[Any]
-        
+        return list(chain(*x))
+
+
+    def listify(x: Any) -> list[Any]:
+        return [x]
 
     
-    M = monad(list, listfmap, lambda x: [x], listjoin)
+    M = monad(list, listfmap, listify, listjoin_)
     m = M([[1, 2], [3, 4]])
-    joined = m.join(listify, li)
+    joined = m.join(m.compose(1))
+    print(joined)
+
