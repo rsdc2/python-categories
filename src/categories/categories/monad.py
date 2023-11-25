@@ -88,4 +88,4 @@ if __name__ == '__main__':
 
     conc = Mn.concat([Md.pure, Md.pure])
 
-    i = 
+    i = conc([1, 2, 3])
