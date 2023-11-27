@@ -4,10 +4,10 @@ import operator
 # from categories.functor import Monad, monad
 from categories.compose import compose
 
-M = monoid(1, operator.mul)
-N = monoid(0, operator.add)
-X = monoid[str]('', operator.add)
-Y = monoid[list]([], operator.add)
+M = monoid(int, 1, operator.mul)
+N = monoid(int, 0, operator.add)
+X = monoid[str](str, '', operator.add)
+Y = monoid[list](list, [], operator.add)
 
 
 # Z = monoid(monad.ret, monad.join)

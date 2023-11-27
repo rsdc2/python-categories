@@ -56,10 +56,10 @@ class group(Generic[T]):
     _type: type[T]
     _inverse: Callable[[T], T]
 
-    def __init__(self, empty: T, op: Callable[[T, T], T], inverse: Callable[[T], T]):
-        self._type = type(empty)
+    def __init__(self, t: type[T], identity: T, op: Callable[[T, T], T], inverse: Callable[[T], T]):
+        self._type = t
         self._op = op
-        self._identity = empty
+        self._identity = identity
         self._inverse = inverse
 
     def __call__(self, value: T) -> Group[T]:
