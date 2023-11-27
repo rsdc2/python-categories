@@ -1,6 +1,6 @@
 from typing import Any, Callable
 from itertools import chain
-from .monoid_ import monoid
+from .monoid import monoid
 
 
 if __name__ == '__main__':
