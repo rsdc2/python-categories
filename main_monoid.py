@@ -26,8 +26,12 @@ def add10(x: int) -> int:
 def mult10(x: int) -> int:
     return x * 10
 
-f = Z.concat([append10, mult10, add10])
+f = Z.concat([add10, mult10, add10])
+print(f)
 n = f.value(10)
+
+print(Z.test_associativity((add10, mult10, add10)))
+print(Z.test_identity(add10))
 
 # Z = monoid(monad.ret, monad.join)
 
