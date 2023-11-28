@@ -12,3 +12,16 @@ def compose(f: Callable[[U], V], g: Callable[[T], U]) -> Callable[[T], V]:
         return f(g(x))
 
     return _compose
+
+
+def compose_(f: Callable[[T], T], g: Callable[[T], T]) -> Callable[[T], T]:
+
+    def _compose(x: T) -> T:
+
+        return f(g(x))
+
+    return _compose
+
+
+def identity(x: T) -> T:
+    return x

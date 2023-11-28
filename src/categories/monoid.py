@@ -15,6 +15,7 @@ import operator
 from functools import reduce
 from .semigroup import Semigroup, semigroup
 T = TypeVar('T')
+U = TypeVar('U')
 
 
 
@@ -25,6 +26,12 @@ class Monoid(Generic[T]):
     def __init__(self, value: T, monoid: monoid[T]):
         self._value = value
         self._monoid = monoid
+
+    # def __call__(self, x: U) -> U:
+    #     if self._monoid._type is Callable:
+    #         return self._value(x)
+        
+    #     raise ValueError('Monoid is not callable')
 
     def op(self, x: T, y: T) -> T:
         return self.op(x, y)

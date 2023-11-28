@@ -1,14 +1,33 @@
+from typing import TypeVar
+import typing
 from categories.monoid import *
 import operator
 
+A = TypeVar('A')
+B = TypeVar('B')
+
+FType = Callable[[A], A]
+
 # from categories.functor import Monad, monad
-from categories.compose import compose
+from categories.functions import compose, compose_, identity
 
 M = monoid(int, 1, operator.mul)
 N = monoid(int, 0, operator.add)
 X = monoid[str](str, '', operator.add)
 Y = monoid[list](list, [], operator.add)
+Z = monoid[Callable[[int], int]](type, identity, compose_)
 
+def append10(x: str) -> str:
+    return x + '10'
+
+def add10(x: int) -> int:
+    return x + 10
+
+def mult10(x: int) -> int:
+    return x * 10
+
+f = Z.concat([append10, mult10, add10])
+n = f.value(10)
 
 # Z = monoid(monad.ret, monad.join)
 
