@@ -1,5 +1,5 @@
 from categories.group import group, Group
-from categories.monoid import monoid, Monoid
+from categories.monoids.type_monoid import monoid, Monoid
 
 import operator
 

@@ -1,6 +1,6 @@
 from typing import Any, Callable
 from itertools import chain
-from .monoid import monoid
+from .monoids.type_monoid import monoid
 
 
 if __name__ == '__main__':
@@ -26,7 +26,7 @@ if __name__ == '__main__':
         return _join
 
 
-    Mon = monoid[f](listify, join)
+    Mon = monoid[f](f, listify, join)
 
     mon = Mon(listify)
 

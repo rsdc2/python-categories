@@ -13,10 +13,11 @@ from typing import (
 
 import operator
 from functools import reduce
-from .semigroup import Semigroup, semigroup
+from ..semigroup import Semigroup, semigroup
 T = TypeVar('T')
 U = TypeVar('U')
 
+from enum import Enum
 
 
 class Monoid(Generic[T]):
@@ -26,12 +27,6 @@ class Monoid(Generic[T]):
     def __init__(self, value: T, monoid: monoid[T]):
         self._value = value
         self._monoid = monoid
-
-    # def __call__(self, x: U) -> U:
-    #     if self._monoid._type is Callable:
-    #         return self._value(x)
-        
-    #     raise ValueError('Monoid is not callable')
 
     def op(self, x: T, y: T) -> T:
         return self.op(x, y)
@@ -71,8 +66,8 @@ class monoid(Generic[T]):
     _identity: T
     _type: type[T]
 
-    def __init__(self, t: type[T], identity: T, op: Callable[[T, T], T]):
-        self._type = t
+    def __init__(self, s: set[T], identity: T, op: Callable[[T, T], T]):
+        self._set = s
         self._op = op
         self._identity = identity
 

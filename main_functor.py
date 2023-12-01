@@ -1,6 +1,6 @@
 from categories.endofunctor import Identity, Endofunctor, endofunctor, maybe, Maybe, Just, Nothing, lst, Lst
-from categories.monoid import Monoid, monoid
-from categories.compose import compose
+from categories.monoids.type_monoid import Monoid, monoid
+from categories.functions import compose
 from typing import TypeVar, Callable, Any, Type
 from itertools import chain
 

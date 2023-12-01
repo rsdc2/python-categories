@@ -3,7 +3,7 @@ from typing import Generic, TypeVar, Callable, Iterable, Any
 from itertools import chain
 from copy import deepcopy
 
-from .monoid import monoid, Monoid
+from .monoids.type_monoid import monoid, Monoid
 
 T = TypeVar('T')
 

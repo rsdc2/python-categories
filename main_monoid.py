@@ -1,12 +1,22 @@
 from typing import TypeVar
 import typing
-from categories.monoid import *
+from categories.monoids.type_monoid import *
 import operator
+
+from enum import Enum, StrEnum
 
 A = TypeVar('A')
 B = TypeVar('B')
 
 FType = Callable[[A], A]
+
+class Letters(Enum):
+    A = 'A'
+    T = 'T'
+    G = 'G'
+    C = 'C'
+
+x = set(Letters)
 
 # from categories.functor import Monad, monad
 from categories.functions import compose, identity
