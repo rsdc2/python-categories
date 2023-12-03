@@ -101,7 +101,7 @@ if __name__ == '__main__':
     result2 = func2.fmap(str)
     print(result2)
 
-    Func3 = functor(s(int), s(list[int]), listfmap)
+    Func3 = functor[Any, Any, list[Any], list[Any]]((Any, Any), (list[Any], list[Any]), listfmap)
     func3 = Func2([1, 2, 3])
     result2 = func2.fmap(str)
     print(result2)
