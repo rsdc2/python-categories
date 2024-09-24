@@ -13,8 +13,8 @@ if __name__ == '__main__':
     def mapf(l: list, f: Callable[[U], V]) -> list:
         return list(map(f, l))
 
-    Functor = endofunctor[list](fmap=mapf)
-    functor_inst: Endofunctor[list, int] = Functor([1, 2, 3])
+    ListFunctor = endofunctor[list](fmap=mapf)
+    functor_inst: Endofunctor[list, int] = ListFunctor([1, 2, 3])
 
     s = functor_inst.fmap(str)
 
