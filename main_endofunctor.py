@@ -6,26 +6,15 @@ from itertools import chain
 
 T = TypeVar('T')
 U = TypeVar('U')
+V = TypeVar('V')
 
 if __name__ == '__main__':
 
+    def mapf(l: list, f: Callable[[U], V]) -> list:
+        return list(map(f, l))
 
-    # f = endofunctor(int, Identity[int])
-    # g = endofunctor(int, list[int])
-    
+    functor = endofunctor[list](fmap=mapf)
 
-    # v = f(1)
+    s = functor([1, 2, 3]).fmap(str)
 
-    mbe = maybe(int)
-
-    # add1 = lambda x: x + 1
-
-    def add1(x: int):
-        return x + 1
-
-    # M = mbe(1)
-    M = mbe(1).fmap(add1)
-
-    N: Maybe[None] = mbe(None).fmap(add1) 
-
-    print(M, N)
+    endo_s = endofunctor(list, str, )
