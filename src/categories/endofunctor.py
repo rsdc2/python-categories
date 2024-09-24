@@ -22,6 +22,9 @@ class Endofunctor(Generic[T, U]):
         self._functor_inst = functor_inst
         self._functor = _functor
 
+    def __repr__(self) -> str:
+        return f'Endofunctor({self._functor}, {str(self._functor_inst)})'
+
     def __str__(self) -> str:
         return f'Endofunctor({self._functor}, {str(self._functor_inst)})'
 

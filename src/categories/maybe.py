@@ -2,7 +2,7 @@ from typing import TypeVar, Generic, Callable
 
 T = TypeVar('T')
 U = TypeVar('U')
-V = TypeVar['V']
+V = TypeVar('V')
 
 
 class Just(Generic[T]):
@@ -12,17 +12,24 @@ class Just(Generic[T]):
     def __init__(self, value: T) -> None:
         self._value = value
 
+    def __repr__(self) -> str:
+        return f'Just({self._value}: {type(self._value).__name__})'
 
-class Nothing:
-    pass
+
+class Nothing(Generic[T]):
+    _value: None = None
+
+    def __repr__(self) -> str:
+        return 'Nothing'
 
 
 Maybe = Just[T] | Nothing
 
 
-class maybe(Generic[T]):
+class maybe(Generic[U]):
 
-    def __call__(self, value: T | None) -> Maybe[T]:
+    @classmethod
+    def of(cls, value: U | None) -> Maybe[U]:
         
         if value is None:
             return Nothing()
@@ -31,7 +38,13 @@ class maybe(Generic[T]):
 
 
     @classmethod
-    def fmap(cls, m: Maybe, f: Callable[[U], V]):
+    def fmap(cls, m: Maybe[T], f: Callable[[T | None], U | None]) -> Maybe[U]:
+
+        result = f(m._value)
+        if result is None:
+            return Nothing[T]()
         
+        return Just(result)
+
 
 

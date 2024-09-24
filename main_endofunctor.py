@@ -4,9 +4,12 @@ from categories.functions import compose
 from typing import TypeVar, Callable, Any, Type
 from itertools import chain
 
+from categories.maybe import Maybe, Just, Nothing, maybe
+
 T = TypeVar('T')
 U = TypeVar('U')
 V = TypeVar('V')
+
 
 if __name__ == '__main__':
 
@@ -14,8 +17,11 @@ if __name__ == '__main__':
         return list(map(f, l))
 
     ListFunctor = endofunctor[list](fmap=mapf)
-    functor_inst: Endofunctor[list, int] = ListFunctor([1, 2, 3])
+    list_functor_inst: Endofunctor[list, int] = ListFunctor([1, 2, 3])
 
-    s = functor_inst.fmap(str)
+    s = list_functor_inst.fmap(str).fmap(float)
 
-    
+    MaybeFunctor = endofunctor[Maybe](fmap=maybe.fmap)
+    maybe_functor_inst: Endofunctor[Maybe, int] = MaybeFunctor(maybe[int].of(1))
+
+    x = maybe_functor_inst.fmap(lambda x: None)
