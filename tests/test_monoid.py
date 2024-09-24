@@ -1,11 +1,12 @@
 from categories.monoids.type_monoid import monoid, Monoid
 import random
 import pytest
-from typing import Type, TypeVar, Callable
+from typing import TypeVar, Callable
 import operator
 
 
 T = TypeVar('T')
+
 
 def randint() -> int:
     return random.randint(0, 200)
@@ -22,11 +23,8 @@ def get_triples(total: int, random_generator: Callable[[], T]) -> list[tuple[T, 
 
 
 @pytest.mark.parametrize("triple", get_triples(100, randint))
-def test_monoid_associative(
-    # t: Type, 
-    # identity: T, 
-    # op: Callable[[T, T], T], 
-    triple: tuple[T, T, T]
+def test_monoid_int_associative(
+    triple: tuple[int, int, int]
 ):
     
     M = monoid(int, 0, operator.add)
@@ -36,7 +34,7 @@ def test_monoid_associative(
 
 @pytest.mark.parametrize("random_value", get_random(200, randint))
 def test_monoid_identity(
-    random_value: T
+    random_value: int
 ):
     M = monoid(int, 0, operator.add)
 

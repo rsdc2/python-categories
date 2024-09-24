@@ -11,11 +11,9 @@ from typing import (
     Any
 )
 
-import operator
 from functools import reduce
 from ..semigroup import Semigroup, semigroup
 T = TypeVar('T')
-U = TypeVar('U')
 
 
 
@@ -27,11 +25,25 @@ class Monoid(Generic[T]):
         self._value = value
         self._monoid = monoid
 
-    # def __call__(self, x: U) -> U:
-    #     if self._monoid._type is Callable:
-    #         return self._value(x)
+    def __add__(self, other: Monoid[T]) -> Monoid[T]:
+        value = self._monoid._op(self._value, other._value)
+        return Monoid[T](value, self._monoid)
+    
+    def __mul__(self, other: Monoid[T]) -> Monoid[T]:
+        return self.__add__(other)
+    
+    def __str__(self) -> str:
+        return self.__repr__()
+
+    def __eq__(self, other: Any) -> bool:
+        if type(other) != type(self):
+            return False
         
-    #     raise ValueError('Monoid is not callable')
+        return self._monoid == other._monoid and \
+            self._value == other._value
+
+    def __repr__(self) -> str:
+        return f'Monoid(type: {type(self._value)}, value: {self._value})'
 
     def op(self, x: T, y: T) -> T:
         return self.op(x, y)
@@ -44,39 +56,41 @@ class Monoid(Generic[T]):
     def value(self, value: T):
         self._value = value
     
-    def __add__(self, other: Monoid[T]) -> Monoid[T]:
-        value = self._monoid._op(self._value, other._value)
-        return Monoid[T](value, self._monoid)
-    
-    def __mul__(self, other: Monoid[T]) -> Monoid[T]:
-        return self.__add__(other)
-    
-    def __repr__(self) -> str:
-        return f'Monoid({self._value})'
-    
-    def __str__(self) -> str:
-        return self.__repr__()
-
-    def __eq__(self, other: Any) -> bool:
-        if type(other) != type(self):
-            return False
-        
-        return self._monoid == other._monoid and \
-            self._value == other._value
-
-
 
 class monoid(Generic[T]):
+    """
+    Type constructor for a Monoid wrapper around a type T
+    """
+
     _op: Callable[[T, T], T]
     _identity: T
     _type: type[T]
 
-    def __init__(self, t: type[T], identity: T, op: Callable[[T, T], T]):
+    def __init__(
+            self, 
+            t: type[T], 
+            identity: T, 
+            op: Callable[[T, T], T]) -> None: 
+
+        """
+        A monoid is a set with a binary join operation and identity such that
+        a · e = e · a = a. 
+
+        :param t: the type (= underlying set) of the monoid, e.g. `int`.
+        :param identity: identity, e.g. `0`
+        :param op: a binary join operation, e.g. `+`
+        """
+        
         self._type = t
         self._op = op
         self._identity = identity
 
     def __call__(self, value: T) -> Monoid[T]:
+
+        """
+        Wrap a T instance in a Monoid type
+        """
+        
         return Monoid[T](value, self)
     
     def __eq__(self, other: Any) -> bool:
@@ -87,9 +101,18 @@ class monoid(Generic[T]):
         return self._op == other._op and \
             self._type == other._type and \
             self._identity == other._identity
+
+    def __repr__(self) -> str:
+
+        return f'monoid(type: {self._type}, identity: {self._identity}, op: {self._op})'
     
-    def concat(self, seq: Sequence[T]) -> Monoid[T]:
-        return self(reduce(self._op, seq, self._identity))
+    def concat(self, seq: Sequence[T]) -> T:
+        """
+        Successively join a sequence of T instances using
+        the monoid binary join operation.
+        """
+
+        return reduce(self._op, seq, self._identity)
 
     def test_associativity(self, triple: tuple[T, T, T]) -> bool:
         ms = [self(value) for value in triple]

@@ -5,27 +5,17 @@ import operator
 
 from enum import Enum, StrEnum
 
-A = TypeVar('A')
-B = TypeVar('B')
-
-FType = Callable[[A], A]
-
-class Letters(Enum):
-    A = 'A'
-    T = 'T'
-    G = 'G'
-    C = 'C'
-
-x = set(Letters)
 
 # from categories.functor import Monad, monad
 from categories.functions import compose, identity
 
-M = monoid(int, 1, operator.mul)
-N = monoid(int, 0, operator.add)
-X = monoid[str](str, '', operator.add)
-Y = monoid[list](list, [], operator.add)
-Z = monoid[Callable[[int], int]](type, identity, compose)
+NaturalMulM = monoid(int, 1, operator.mul)
+NaturalAddM = monoid(int, 0, operator.add)
+StringM = monoid[str](str, '', operator.add)
+ListM = monoid[list](list, [], operator.add)
+BinaryFuncM = monoid[Callable[[int], int]](type, identity, compose)
+
+
 
 def append10(x: str) -> str:
     return x + '10'
@@ -33,14 +23,21 @@ def append10(x: str) -> str:
 def add10(x: int) -> int:
     return x + 10
 
-def mult10(x: int) -> int:
+def mul10(x: int) -> int:
     return x * 10
 
-f1 = Z.concat([add10, mult10, add10])
-f2 = (Z(add10) + Z(mult10)) + Z(add10)
-f3 = Z(add10) + (Z(mult10) + Z(add10))
-n = f1.value(10) == f2.value(10) == f3.value(10)
-print(n)
+
+mcompose = BinaryFuncM.concat([mul10, add10, add10])
+mstring = StringM.concat(['hello', ' Robert'])
+n = mcompose(1)
+print(NaturalAddM)
+print(StringM('hello') + StringM(' Robert'))
+
+# f1 = BinaryFuncM.concat([add10, mul10, add10])
+# f2 = (BinaryFuncM(add10) + BinaryFuncM(mul10)) + BinaryFuncM(add10)
+# f3 = BinaryFuncM(add10) + (BinaryFuncM(mul10) + BinaryFuncM(add10))
+# n = f1.value(10) == f2.value(10) == f3.value(10)
+# print(n)
 
 # print(Z.test_associativity((add10, mult10, add10)))
 # print(Z.test_identity(add10))
