@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "categories"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = []
 version = "0.1.0"
 authors = [
@@ -16,7 +16,12 @@ keywords = ["categories", "monoids"]
 
 [project.optional-dependencies]
 dev = [
-    "mypy == 1.7"
+    "mypy"
+]
+
+ju = [
+    "mypy",
+    "jupyter"
 ]
 
 [tool.setuptools.packages.find]
