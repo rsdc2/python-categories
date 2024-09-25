@@ -1,5 +1,5 @@
 
-from categories.monoids.type_monoid import *
+from categories.monoids.monoid import *
 import operator
 
 # from categories.functor import Monad, monad
