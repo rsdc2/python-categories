@@ -1,4 +1,4 @@
-from categories.monoid import monoid, Monoid
+from python_categories.monoid import monoid, Monoid
 import random
 import pytest
 from typing import TypeVar, Callable

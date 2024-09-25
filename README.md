@@ -26,11 +26,43 @@ the notebooks under `notebooks/` in this repository.
 
 # Installing
 
+## (Optionally) set up a virtual environment
+
+It is often a good idea to set up a local virtual environment, so as to prevent package contamination in your local Python installation:
+
+1. (Optionally) set up a virtual environment e.g.:
+
+```
+python3.12 -m venv .env312
+```
+
+2. Activate, e.g.:
+
+```
+source .env312/bin/activate
+```
+
+
 ## For use locally
+
+
+Install with `pip`:
 
 ```
 pip install [path_to_repo]
 ```
+
+The library itself has no external dependencies, so this will simply install `categories` as a 
+
+## For development with editable install
+
+From within the repo:
+
+```
+pip install .
+```
+
+## For development including notebooks
 
 # Run the tests
 
