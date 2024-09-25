@@ -5,16 +5,11 @@ from typing import (
     Callable, 
     Generic, 
     Sequence, 
-    Type, 
-    ClassVar, 
-    Union,
     Any
 )
 
 from functools import reduce
-from ....dev.src.categories.semigroup import Semigroup, semigroup
 T = TypeVar('T')
-
 
 
 class Monoid(Generic[T]):
@@ -29,6 +24,14 @@ class Monoid(Generic[T]):
         value = self._monoid._op(self._value, other._value)
         return Monoid[T](value, self._monoid)
     
+    def __call__(self, v):
+        if isinstance(self._value, Callable):
+            return self._value(v)
+        else:
+            raise TypeError(f'{type(self._value)} is not callable. '
+                            'A Monoid object can only be called if '
+                            'the underlying type is callable.') 
+
     def __mul__(self, other: Monoid[T]) -> Monoid[T]:
         return self.__add__(other)
     
@@ -43,7 +46,7 @@ class Monoid(Generic[T]):
             self._value == other._value
 
     def __repr__(self) -> str:
-        return f'Monoid(type: {type(self._value)}, value: {self._value})'
+        return f'Monoid[{type(self._value).__name__}]({self._value})'
 
     def op(self, x: T, y: T) -> T:
         return self.op(x, y)
@@ -104,15 +107,15 @@ class monoid(Generic[T]):
 
     def __repr__(self) -> str:
 
-        return f'monoid(type: {self._type}, identity: {self._identity}, op: {self._op})'
+        return f'monoid[{self._type.__name__}](identity: {self._identity}, op: {self._op})'
     
-    def concat(self, seq: Sequence[T]) -> T:
+    def concat(self, seq: Sequence[T]) -> Monoid[T]:
         """
         Successively join a sequence of T instances using
         the monoid binary join operation.
         """
 
-        return reduce(self._op, seq, self._identity)
+        return self(reduce(self._op, seq, self._identity))
 
     def test_associativity(self, triple: tuple[T, T, T]) -> bool:
         ms = [self(value) for value in triple]

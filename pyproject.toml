@@ -16,12 +16,14 @@ keywords = ["categories", "monoids"]
 
 [project.optional-dependencies]
 dev = [
-    "mypy"
+    "mypy",
+    "pytest"
 ]
 
 ju = [
     "mypy",
-    "jupyter"
+    "jupyter",
+    "pytest"
 ]
 
 [tool.setuptools.packages.find]
@@ -29,7 +31,7 @@ where = ["src"]
 
 [tool.mypy]
 ignore_missing_imports = true
-exclude = ['out', 'build']
+exclude = ['out', 'build', 'dev']
 
 [tool.setuptools]
 include-package-data = false

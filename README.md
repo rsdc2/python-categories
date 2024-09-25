@@ -4,14 +4,45 @@ The purpose of this repository is to provide tools for exploring various aspects
 
 ## Concept
 
-The basic idea is to imitate Haskell type classes using constructors that link Python types with type classes, including monoids, endofunctors and monads. The corresponding constructors are `monoid`, `endofunctor` and `monad`, e.g.:
+The basic idea is to imitate Haskell type classes using constructors that link Python types with type classes, including monoids, endofunctors and monads, where corresponding constructors are `monoid`, `endofunctor` and `monad`, e.g.:
 
 ```
-from categories.monoi
+from categories.monoid import monoid
+
+# Define the integers as a monoid under addition
+# and 0 as identity
+
+IntM = monoid(t=int, identity=0, op=operator.add)
+```
+
+Python objects of the correct type can then be made instances of the Monoid:
 
 ```
+m1 = M(1)   # m1 is of type Monoid[int]
+```
+
+Some example usage is given further below. For further worked examples, see
+the notebooks under `notebooks/` in this repository.
+
+# Installing
+
+
+
+# Worked examples
 
 ## Monoids
+
+Two instances of a given monoid can be joined using the monoid join operation:
+
+```
+m = M(1) + M(2)     # m = M(3)
+```
+
+A list of `int`s can be summed using the monoid concatenation operation:
+
+```
+total = M.concat([1, 2, 3, 4, 5, 6])    # total = Monoid[int](21)
+```
 
 ## Endofunctors
 
