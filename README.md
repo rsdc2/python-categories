@@ -26,7 +26,19 @@ the notebooks under `notebooks/` in this repository.
 
 # Installing
 
+## For use locally
 
+```
+pip install [path_to_repo]
+```
+
+# Run the tests
+
+So far tests have only been written for `monoid`. From the repo root directory run:
+
+```
+pytest
+```
 
 # Worked examples
 
