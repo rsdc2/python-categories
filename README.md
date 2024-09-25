@@ -1,6 +1,6 @@
 # Categories in Python
 
-The purpose of this repository is to provide tools for exploring various aspects of categories and category theory in Python. It is built and tested using Python 3.12.
+The purpose of this repository is to provide tools for exploring various aspects of categories and category theory in Python. It is built and tested using Python 3.12. 
 
 ## Concept
 
@@ -18,7 +18,7 @@ IntM = monoid(t=int, identity=0, op=operator.add)
 Python objects of the correct type can then be made instances of the Monoid:
 
 ```
-m1 = M(1)   # m1 is of type Monoid[int]
+m1 = IntM(1)   # m1 is of type Monoid[int]
 ```
 
 Some example usage is given further below. For further worked examples, see
@@ -52,17 +52,32 @@ Install with `pip`:
 pip install [path_to_repo]
 ```
 
-The library itself has no external dependencies, so this will simply install `categories` as a 
+The library itself has no external dependencies, so this will simply install `python_categories` as a package in your project.
 
 ## For development with editable install
 
 From within the repo:
 
 ```
-pip install .
+pip install -e .[dev]
 ```
 
+This will install `python_categories` with the following dependences:
+
+- pytest (MIT), see [https://pypi.org/project/pytest/](https://pypi.org/project/pytest/)
+- mypy (MIT), see [https://pypi.org/project/mypy/](https://pypi.org/project/mypy/)
+
 ## For development including notebooks
+
+```
+pip install -e .[ju]
+```
+
+This will install `python_categories` with the dev dependencies and the resources for running Jupyter notebooks:
+
+- `pytest` (MIT), see [https://pypi.org/project/pytest/](https://pypi.org/project/pytest/)
+- `mypy` (MIT), see [https://pypi.org/project/mypy/](https://pypi.org/project/mypy/)
+- `jupyter` (BSD)
 
 # Run the tests
 
@@ -79,7 +94,7 @@ pytest
 Two instances of a given monoid can be joined using the monoid join operation:
 
 ```
-m = M(1) + M(2)     # m = M(3)
+m = IntM(1) + IntM(2)     # m = Monoid[int](3)
 ```
 
 A list of `int`s can be summed using the monoid concatenation operation:
@@ -162,3 +177,7 @@ list_m_ = list_m.bind(lambda x: [*range(1, x + 1)])
 
 # list_m contains [1, 1, 2, 1, 2, 3]
 ```
+
+# Resources
+
+For a different approach to the implementation of these ideas, see (https://gitlab.com/danielhones/pycategories/)[https://gitlab.com/danielhones/pycategories/].
