@@ -1,10 +1,6 @@
-from typing import TypeVar
-import typing
+
 from categories.monoids.type_monoid import *
 import operator
-
-from enum import Enum, StrEnum
-
 
 # from categories.functor import Monad, monad
 from categories.functions import compose, identity

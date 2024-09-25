@@ -33,6 +33,9 @@ class Monad(Generic[M, T]):
         x = self._monad._bind(self._minst, f)
         return Monad[M, U](x, self._monad)
 
+    # @classmethod
+    # def pure(cls, v: T) -> Monad[M, T]:
+
 
 class monad(Generic[M]):
     _fmap: Callable[[M, Callable], M]
@@ -46,7 +49,7 @@ class monad(Generic[M]):
         self._fmap = fmap
         self._bind = bind
 
-    def __call__(self, v: M) -> Monad[M, T]:
+    def __call__(self, t: type[T], v: M) -> Monad[M, T]:
         return Monad[M, T](v, self)
 
     def __str__(self) -> str:

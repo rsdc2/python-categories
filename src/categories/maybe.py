@@ -29,7 +29,7 @@ Maybe = Just[T] | Nothing
 class maybe(Generic[U]):
 
     @classmethod
-    def of(cls, value: U | None) -> Maybe[U]:
+    def pure(cls, value: U | None) -> Maybe[U]:
         
         if value is None:
             return Nothing()

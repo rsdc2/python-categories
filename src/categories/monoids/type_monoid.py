@@ -12,7 +12,7 @@ from typing import (
 )
 
 from functools import reduce
-from ..semigroup import Semigroup, semigroup
+from ....dev.src.categories.semigroup import Semigroup, semigroup
 T = TypeVar('T')
 
 

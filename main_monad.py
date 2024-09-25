@@ -21,17 +21,17 @@ if __name__ == '__main__':
         return [*chain(*map(f, l))]
 
     ListMonad = monad[list](fmap=mapf, bind=bindlist)
-    listmonad: Monad[list, int] = ListMonad([1, 2, 3])
+    listmonad = ListMonad(int, [1, 2, 3])
 
     # print(joinlist([[1, 2, 3], [1, 2, 3]]))
 
-    z: Monad[list, int] = listmonad.bind(lambda x: [x])
+    z: Monad[list, int] = listmonad.bind(lambda x: [*range(x)])
 
     print(z)
 
 
     MaybeM = monad[Maybe](fmap=maybe.fmap, bind=maybe.bind)
     
-    maybeM: Monad[Maybe, int] = MaybeM(Just(0))
+    maybeM: Monad[Maybe, int] = MaybeM(int, Just(0))
 
     print(maybeM.bind(lambda x: Nothing() if x == 0 else Just(x)))
