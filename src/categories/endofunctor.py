@@ -2,49 +2,43 @@ from __future__ import annotations
 from typing import Generic, TypeVar, Callable, Iterable, Any, Type
 from copy import deepcopy
 
+F = TypeVar('F')
 T = TypeVar('T')
 U = TypeVar('U')
-V = TypeVar('V')
-W = TypeVar('W')
-X = TypeVar('X')
-
-F = Callable[[T], T]
-G = Callable[[U], U]
-H = Callable[[F], G]
 
 
-class Endofunctor(Generic[T, U]):
+class Endofunctor(Generic[F, T]):
 
-    _functor_inst: T
-    _functor: endofunctor[T]
+    _finst: F
+    _functor: endofunctor[F]
 
-    def __init__(self, functor_inst: T, _functor: endofunctor[T]):
-        self._functor_inst = functor_inst
+    def __init__(self, functor_inst: F, _functor: endofunctor[F]):
+        self._finst = functor_inst
         self._functor = _functor
 
     def __repr__(self) -> str:
-        return f'Endofunctor({self._functor}, {str(self._functor_inst)})'
+        return f'Endofunctor[{type(self._finst).__name__}]({str(self._finst)})'
 
     def __str__(self) -> str:
-        return f'Endofunctor({self._functor}, {str(self._functor_inst)})'
+        return self.__repr__()
 
-    def fmap(self, f: Callable[[U], V]) -> Endofunctor[T, V]:
+    def fmap(self, f: Callable[[T], U]) -> Endofunctor[F, U]:
         fmap = self._functor._fmap
 
-        return Endofunctor[T, V](fmap(self._functor_inst, f), self._functor)
+        return Endofunctor[F, U](fmap(self._finst, f), self._functor)
 
 
-class endofunctor(Generic[T]):
-    _fmap: Callable[[T, Callable], T]
+class endofunctor(Generic[F]):
+    _fmap: Callable[[F, Callable], F]
 
-    def __init__(self, fmap: Callable[[T, Callable], T]):
+    def __init__(self, fmap: Callable[[F, Callable], F]):
         self._fmap = fmap
 
-    def __call__(self, v: T) -> Endofunctor[T, U]:
-        return Endofunctor[T, U](v, self)
+    def __call__(self, t: type[T], v: F) -> Endofunctor[F, T]:
+        return Endofunctor[F, T](v, self)
 
     def __str__(self) -> str:
-        return f'endofunctor({self._fmap})'
+        return f'endofunctor(fmap: {self._fmap.__name__})'
 
 
 if __name__ == '__main__':

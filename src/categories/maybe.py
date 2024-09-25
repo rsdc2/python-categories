@@ -46,5 +46,19 @@ class maybe(Generic[U]):
         
         return Just(result)
 
+    
+    @classmethod
+    def bind(cls, m: Maybe[T], f: Callable[[T], Maybe[U]]) -> Maybe[U]:
+        
+        if m._value is None:
+            return Nothing[U]()
+        
+        result = f(m._value)
+
+        if result._value is None:
+            return Nothing[U]()
+        
+        return Just(result._value)
+    
 
 

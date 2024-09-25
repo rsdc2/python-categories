@@ -1,94 +1,54 @@
 from __future__ import annotations
-from typing import Generic, TypeVar, Callable, Iterable, Any
-from itertools import chain
-from copy import deepcopy
+from typing import Generic, TypeVar, Callable
 
-from .monoids.type_monoid import monoid, Monoid
 
+
+M = TypeVar('M')
+N = TypeVar('N')
 T = TypeVar('T')
+U = TypeVar('U')
 
-F = Callable[[Any], Any]
-G = Callable[[T], T]
-H = Callable[[F], G]
-I = Callable[[Any], T]
-J = Callable[[I, I], I]
-K = Callable[[I, I], T]
 
-class Monad(Generic[T]):
+class Monad(Generic[M, T]):
 
-    _value: T
-    _monad: monad
+    _minst: M
+    _monad: monad[M]
 
-    def __init__(self, value: T, _monad: monad):
-        self._value = value
-        self._monad = _monad
+    def __init__(self, value: M, m: monad[M]):
+        self._minst = value
+        self._monad = m
 
+    def __repr__(self) -> str:
+        return f'Monad[{type(self._minst).__name__}]({str(self._minst)})'
+    
     def __str__(self) -> str:
-        return f'Functor({self._monad}, {str(self._value)})'
+        return self.__repr__()
 
-    def fmap(self, f: Callable[[Any], Any]) -> T:
-        return self._monad._fmap(f)(self._value)
+    def fmap(self, f: Callable[[T], U]) -> Monad[M, U]:
+        fmap = self._monad._fmap
+
+        return Monad[M, U](fmap(self._minst, f), self._monad)
     
-    def pure(self, x: Any) -> T:
-        return self._monad._pure(x)
-
-    def compose(self, x: Any) -> T:
-        return self._monad._pure(self._monad._pure(x))
-    
-    def join(self, x: T) -> T:
-        pure = self._monad._pure
-        return self._monad._join(x)
+    def bind(self, f: Callable[[T], M]) -> Monad[M, U]:
+        x = self._monad._bind(self._minst, f)
+        return Monad[M, U](x, self._monad)
 
 
-class monad(Generic[T]):
-    _type: type[T]
-    _fmap: H
-    _pure: I
-    _join: G
-    _compose: K
+class monad(Generic[M]):
+    _fmap: Callable[[M, Callable], M]
+    _bind: Callable[[M, Callable], M]
 
-    def __init__(self, t: type[T], fmap: H, pure: I, join: G):
-        self._type = t
+    def __init__(
+            self, 
+            fmap: Callable[[M, Callable], M],
+            bind: Callable[[M, Callable], M]
+    ) -> None:
         self._fmap = fmap
-        self._pure = pure
-        self._join = join
+        self._bind = bind
 
-    def __call__(self, v: T) -> Monad[T]:
-        return Monad(v, self)
+    def __call__(self, v: M) -> Monad[M, T]:
+        return Monad[M, T](v, self)
 
     def __str__(self) -> str:
-        return f'functor({self._type}, {self._fmap})'
-
-if __name__ == '__main__':
-    t = list
-
-    def listfmap(f: Callable[[Any], Any]) -> Callable[[list], list]:
-
-        def _listfmap(l: list) -> list:
-            return list(map(f, l))
-
-        return _listfmap
-    
-    def listjoin(x: Callable[[Any], list], y: Callable[[Any], list]) -> Callable[[Any], list]:
-
-        def _listjoin(z: Any) -> list:
-            l = x(y(z))
-            l_ = list(chain(*l))
-            return l_
-
-        return _listjoin
-    
-    def listjoin_(x: list[list]) -> list:
-
-        return list(chain(*x))
-
-
-    def listify(x: Any) -> list[Any]:
-        return [x]
-
-    
-    M = monad(list, listfmap, listify, listjoin_)
-    m = M([[1, 2], [3, 4]])
-    joined = m.join(m.compose(1))
-    print(joined)
+        return f'monad(fmap: {self._fmap.__name__}, bind: {self._bind.__name__})'
 
