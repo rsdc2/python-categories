@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Generic, TypeVar, Callable
-
+from .functors.endofunctor import Endofunctor
 
 
 M = TypeVar('M')
@@ -9,7 +9,7 @@ T = TypeVar('T')
 U = TypeVar('U')
 
 
-class Monad(Generic[M, T]):
+class Monad(Generic[M, T], Endofunctor[M, T]):
 
     _minst: M
     _monad: monad[M]
@@ -29,13 +29,20 @@ class Monad(Generic[M, T]):
 
         return Monad[M, U](fmap(self._minst, f), self._monad)
     
-    def bind(self, f: Callable[[T], M]) -> Monad[M, U]:
+    def bind(self, f: Callable[[T], M], result_type: type[U]) -> Monad[M, U]:
         x = self._monad._bind(self._minst, f)
         return Monad[M, U](x, self._monad)
+    
+    # def bind_(self, f: Callable[[T], Monad[M, U]]) -> Monad[M, U]:
+    #     x = 
 
     # @classmethod
     # def pure(cls, v: T) -> Monad[M, T]:
 
+
+def bind(u: type[U], minst: Monad[M, T], f: Callable[[T], M]) -> Monad[M, U]:
+    result: Monad[M, U] = minst.bind(f, u)
+    return result
 
 class monad(Generic[M]):
     _fmap: Callable[[M, Callable], M]

@@ -27,6 +27,8 @@ class Endofunctor(Generic[F, T]):
 
         return Endofunctor[F, U](fmap(self._finst, f), self._functor)
 
+def fmap(functor: Endofunctor[F, T], f: Callable[[T], U]) -> Endofunctor[F, U]:
+    return functor.fmap(f)
 
 class endofunctor(Generic[F]):
     _fmap: Callable[[F, Callable], F]

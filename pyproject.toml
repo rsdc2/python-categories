@@ -31,6 +31,7 @@ where = ["src"]
 
 [tool.mypy]
 ignore_missing_imports = true
+enable_incomplete_feature="NewGenericSyntax"
 exclude = ['out', 'build', 'dev']
 
 [tool.setuptools]
